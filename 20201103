@@ -10,31 +10,31 @@ ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidyt
 ikea %>%
   group_by(category) %>%
   summarize(n=n()) %>%
-  arrange(-n) %>%
-  mutate(Grp = n >150, pltGrp = paste0('grp', Grp)) %>% # create 2 dummy variables for grouping text labels
+  arrange(-n) %>% # find number of items in each category
+  mutate(Grp = n >150, pltGrp = paste0('grp', Grp)) %>% # create 2 dummy variables for conditional formatting of text labels based on length of bar
   ggplot(aes(x=fct_reorder(category, n), y=n)) +
   geom_bar(stat='identity', fill="#003399", width=0.8) +
-  geom_text(aes(label=fct_reorder(category, n), color=Grp), fontface='bold', hjust=1.1)+
-  geom_text(aes(label=fct_reorder(category, n), color=pltGrp), fontface='bold', hjust=-0.01)+
-  scale_color_manual(values=c('FALSE'='transparent', 'TRUE'='white', 'grpTRUE'='transparent', 'grpFALSE'='#003399')) +
+  geom_text(aes(label=fct_reorder(category, n), color=Grp), fontface='bold', hjust=1.1)+ # add text labels for long bars
+  geom_text(aes(label=fct_reorder(category, n), color=pltGrp), fontface='bold', hjust=-0.01)+ # add text labels for short bars
+  scale_color_manual(values=c('FALSE'='transparent', 'TRUE'='white', 'grpTRUE'='transparent', 'grpFALSE'='#003399')) + # assign 1 set of duplicate labels to 'transparent' color so that they don't show up
   xlab('') +
   ylab('Number of items') +
   ggtitle('IKEA Furniture Selection') +
   theme_light(base_size=14) +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
+  theme(axis.text.y = element_blank(), # remove y labels since I already added them as geom_text
+        axis.ticks.y = element_blank(), # remove y ticks
         panel.background = element_blank(),
         panel.border = element_blank(),
         panel.grid.major.x = element_line(size = 1, linetype = 'solid',
-                                        colour = "#ffcc00"),
+                                        colour = "#ffcc00"), # make vertical gridlines thicker and change to IKEA yellow
         panel.grid.minor.x = element_line(size = 1, linetype = 'solid',
-                                        colour = "#ffcc00"),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.title.x = element_text(color = "#003399"),
+                                        colour = "#ffcc00"), # make vertical gridlines thicker and change to IKEA yellow
+        panel.grid.major.y = element_blank(), # remove horizontal gridlines
+        panel.grid.minor.y = element_blank(), # remove horizontal gridlines
+        axis.ticks.x = element_blank(), # remove x ticks
+        axis.title.x = element_text(color = "#003399"), # I googled 'IKEA hex colors'
         axis.text.x = element_text(color="#003399"),
-        legend.position = 'none',
-        plot.title = element_text(face='plain', color="#ffcc00", family='Bauhaus 93', size=28)
+        legend.position = 'none', # remove legend
+        plot.title = element_text(face='plain', color="#ffcc00", family='Nirmala', size=28) # change font and color of title
         ) +
-  coord_flip()
+  coord_flip() # make bars run horizontally, not vertically
