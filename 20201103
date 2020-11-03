@@ -1,0 +1,40 @@
+# Tidy Tuesday November 3, 2020. My first one!
+
+library(tidyverse)
+library(extrafonts)
+
+tuesdata <- tidytuesdayR::tt_load(2020, week = 45)
+
+ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-11-03/ikea.csv')
+
+ikea %>%
+  group_by(category) %>%
+  summarize(n=n()) %>%
+  arrange(-n) %>%
+  mutate(Grp = n >150, pltGrp = paste0('grp', Grp)) %>% # create 2 dummy variables for grouping text labels
+  ggplot(aes(x=fct_reorder(category, n), y=n)) +
+  geom_bar(stat='identity', fill="#003399", width=0.8) +
+  geom_text(aes(label=fct_reorder(category, n), color=Grp), fontface='bold', hjust=1.1)+
+  geom_text(aes(label=fct_reorder(category, n), color=pltGrp), fontface='bold', hjust=-0.01)+
+  scale_color_manual(values=c('FALSE'='transparent', 'TRUE'='white', 'grpTRUE'='transparent', 'grpFALSE'='#003399')) +
+  xlab('') +
+  ylab('Number of items') +
+  ggtitle('IKEA Furniture Selection') +
+  theme_light(base_size=14) +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major.x = element_line(size = 1, linetype = 'solid',
+                                        colour = "#ffcc00"),
+        panel.grid.minor.x = element_line(size = 1, linetype = 'solid',
+                                        colour = "#ffcc00"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_text(color = "#003399"),
+        axis.text.x = element_text(color="#003399"),
+        legend.position = 'none',
+        plot.title = element_text(face='plain', color="#ffcc00", family='Bauhaus 93', size=28)
+        ) +
+  coord_flip()
